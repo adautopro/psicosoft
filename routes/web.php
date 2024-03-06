@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\NotaFiscalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +19,6 @@ Route::get('/', function () {
     //return view('welcome');
     return view('home');
 });
+Route::get('pacientes', [PacienteController::class,'index']);
+Route::get('pacientes/sincronizar', [PacienteController::class,'sincronizar']);
+Route::get('gerar-notas',[NotaFiscalController::class,'gerar']);

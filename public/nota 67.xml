@@ -1,0 +1,38 @@
+<Nfse>
+    <EmissaoNotaTomada>
+        <NumeroNota>67</NumeroNota>
+        <DadosPrestador>
+            <tipoDocPrestador>J</tipoDocPrestador>
+            <CpfCnpj>52.163.055/0001-16</CpfCnpj>
+            <im>101825</im>
+            <razaoSocial>LPR SAUDE LTDA</razaoSocial>
+            <endereco>RUA IRINEU GABRIEL FLORINDO</endereco>
+            <numero>85</numero>
+            <bairro>JARDIM ARAUCARIA</bairro>
+            <municipio>São Carlos</municipio>
+            <uf>SP</uf>
+            <cep>13562834</cep>
+            <tel>16992227784</tel>
+        </DadosPrestador>
+        <DadosTomador>
+            <ie> </ie>
+            <tipodoc>F</tipodoc>
+            <logradouro> </logradouro>
+            <numero> </numero>
+            <complemento> </complemento>
+            <bairro> </bairro>
+            <cidade> </cidade>
+            <uf> </uf>
+            <cep> </cep>
+        </DadosTomador>
+        <Atividade>416</Atividade>
+        <DataEmissao>04/03/2024</DataEmissao>
+        <DataCompetencia>29/02/2024</DataCompetencia>
+        <ValorNf>200</ValorNf>
+        <ValorAbatimento> </ValorAbatimento>
+        <ValorBaseCalculo>200</ValorBaseCalculo>
+        <Aliquota>2</Aliquota>
+        <DescricaoObservacao>Uma (1) sessão(ões) de psicoterapia realizadas no(s) dia(s): 29/02/2024 de forma on-line pela Dra. Larissa Pires Ruiz. CRP 06/12575583. [Renata Blotta Gatti]</DescricaoObservacao>
+        <GeraGuiaTributacao>S</GeraGuiaTributacao>
+    </EmissaoNotaTomada>
+</Nfse>
