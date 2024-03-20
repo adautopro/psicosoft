@@ -16,6 +16,7 @@
     <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="assets/compiled/js/app.js"></script>
 
+
     <!-- Need: Apexcharts -->
 
 @endsection
