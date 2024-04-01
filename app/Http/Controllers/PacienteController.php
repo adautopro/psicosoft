@@ -61,6 +61,7 @@ class PacienteController extends Controller
     }
 
     public function index(Request $r){
-        return view('pacientes');
+        $pacientes = Paciente::all();
+        return view('pacientes')->with('pacientes',$pacientes);
     }
 }

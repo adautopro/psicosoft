@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - PsicoSoft</title>
+    <title>Home - Psimo</title>
 
     @include('blocks.header')
     @yield('imports')
@@ -23,7 +23,7 @@
                         <div class="logo">
 
                             <!-- <a href="index.html"><img src="./assets/compiled/svg/logo.svg" alt="Logo" srcset=""></a>-->
-                            <small>Psicosoft</small>
+                            <small>Psimo</small>
                         </div>
                         <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -77,14 +77,14 @@
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
 
-                            <h3><i class="bi bi-file-earmark-person-fill"></i>Pacientes</h3>
+                            <h3><i class="bi bi-file-earmark-person-fill"></i>Notas fiscais</h3>
                             <p class="text-subtitle text-muted">Dados específicos</p>
                         </div>
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Pacientes</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Notas fiscais</li>
                                 </ol>
                             </nav>
                         </div>
@@ -97,10 +97,10 @@
                         </div>
                         <div class="card-body">
                             <div class="buttons">
-                                <button type="button" class="btn btn-outline-primary block" data-bs-toggle="modal" data-bs-target="#importarDados">
+                                <button type="button" class="btn btn-outline-primary block" data-bs-toggle="modal" data-bs-target="#importarNotas">
                                     Importar dados
                                 </button>
-                                @include('blocks.modal-sync')
+                                @include('blocks.modal-importar-notas')
                                 <a href="#" class="btn btn-secondary">Apagar Selecionados</a>
                                 <a href="#" class="btn btn-info">Selecionar todos</a>
 
@@ -121,34 +121,34 @@
                                 <thead>
                                 <tr>
                                     <th>
-                                       ID
+                                       NUMERO
                                     </th>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>CPF</th>
-                                    <th>Telefone</th>
+                                    <th>PESSOA</th>
+                                    <th>Ref</th>
+                                    <th>Valor</th>
+                                    <th>Descriçao</th>
                                     <th>Status</th>
                                     <th>Opções</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($pacientes as $paciente)
+                                @foreach($notas as $nota)
                                 <tr>
                                     <td>
                                         <div class="form-check">
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="form-check-input form-check-primary form-check-glow"  name="paciente[{{$paciente->id}}]" id="checkboxGlow{{$paciente->id}}">
-                                                <label class="form-check-label" for="checkboxGlow{{$paciente->id}}">&nbsp;{{$paciente->id}}</label>
+                                                <input type="checkbox" class="form-check-input form-check-primary form-check-glow"  name="paciente[{{$nota->id}}]" id="checkboxGlow{{$nota->id}}">
+                                                <label class="form-check-label" for="checkboxGlow{{$nota->id}}">&nbsp;{{$nota->id}}</label>
                                             </div>
                                         </div>
                                     </td>
 
-                                    <td>{{$paciente->nome}}</td>
-                                    <td>{{$paciente->email}}</td>
-                                    <td>{{$paciente->cpf}}</td>
-                                    <td>{{$paciente->telefone}}</td>
+                                    <td>{{$nota->getNome()}}</td>
+                                    <td>{{$nota->mes}}/{{$nota->ano}}</td>
+                                    <td>R$ {{number_format($nota->valor,2,',','.')}}</td>
+                                    <td>{{html_entity_decode(explode('realizada',$nota->descricao,)[0], ENT_QUOTES, 'UTF-8') }}</td>
                                     <td>
-                                        <span class="badge bg-success">Ativo</span>
+                                        <span class="badge bg-success">{{$nota->status}}</span>
                                     </td>
                                     <td>
 
@@ -203,8 +203,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         function importar(){
+            if(!$('#mes').val()==='00' || $('#ano').val()<2023){
+                alert("Selecione o período corretamente"+$('#mes').val());
+                return false;
+            }
+
             $.ajax({
-                url: "/pacientes/sincronizar",
+                url: "/gerar-notas/"+$('#mes').val()+"/"+$('#ano').val(),
                 context: document.body,
                 beforeSend: function() {
                     $("#modal-sync").html('Carregando...');

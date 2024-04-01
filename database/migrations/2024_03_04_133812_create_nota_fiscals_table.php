@@ -17,7 +17,10 @@ return new class extends Migration
             $table->smallInteger('valor');
             $table->smallInteger('ano');
             $table->smallInteger('mes');
-            $table->string('descricao');
+            $table->string('descricao',800);
+            $table->string('link',256)->nullable();
+            $table->date('emissao')->nullable();
+            $table->enum('status',['importada','emitida']);
             $table->timestamps();
 
             $table->foreignId('paciente_id')

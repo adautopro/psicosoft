@@ -20,7 +20,7 @@
         </a>
     </li>
     <li class="sidebar-item">
-        <a href="/gerar-notas" class='sidebar-link'>
+        <a href="/notas" class='sidebar-link'>
             <i class="bi bi-file-earmark-medical-fill"></i>
             <span>Notas fiscais</span>
         </a>

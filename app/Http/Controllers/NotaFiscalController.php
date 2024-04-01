@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NotaFiscal;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
 use \Notion;
@@ -9,24 +10,25 @@ use \Notion;
 class NotaFiscalController extends Controller
 {
     const DATABASE_ID = "f30bc42f90ce4e0492e535961d0a6a58";
-    public function gerar(){
-        $qnde = array("Nenhuma", "Uma", "Duas", "Três", "Quatro", "Cinco", "Seis","Sete", "Oito", "Nove", "Dez", "Onze","Doze", "Treze","Quatorze","Quinze");
+    public function index()
+    {
+        $notas = NotaFiscal::all();
+        return view('notas')->with('notas', $notas);
+    }
+    public function importarNotion ($mes,$ano)
+    {
+        $qnde = array("Nenhuma", "Uma", "Duas", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze");
         //https://www.php.net/manual/en/example.xmlwriter-simple.php
         $numero_nota = 105;
 
-        $xw = xmlwriter_open_memory();
-        xmlwriter_set_indent($xw, 1);
-        $res = xmlwriter_set_indent_string($xw, ' ');
-        xmlwriter_start_document($xw, '1.0', 'utf-8');
-        // A first element
-        xmlwriter_start_element($xw, 'nfe');
+
 
 
         $database = Notion::database(self::DATABASE_ID)
             ->query()
             ->asCollection();
 
-        foreach($database as $item) {
+        foreach ($database as $item) {
             $nome = '';
             $cpf = '';
             $logradouro = ' ';
@@ -37,7 +39,7 @@ class NotaFiscalController extends Controller
             $uf = ' ';
             $cep = ' ';
             $email = '';
-            $total=0;
+            $total = 0;
             $descricao = '   ';
             $end_desc = '';
             $sessoes = [];
@@ -51,44 +53,72 @@ class NotaFiscalController extends Controller
                 $nome = 'Undefined by error';
             }
             try {
-                foreach ($lista['rawProperties']['2024-03']["multi_select"] as $sessao) {
+                foreach ($lista['rawProperties'][$ano.'-'.$mes]["multi_select"] as $sessao) {
                     $sessoes[] = $sessao['name'];
                     $end_desc .= '        ' . $sessao['name'] . '/2024 de forma on-line pela Dra. Larissa Pires Ruiz. CRP 06/12575583.' . "\n";
 
                 }
-                if(count($sessoes)>1)
-                    $plural='s';
+                if (count($sessoes) > 1)
+                    $plural = 's';
                 else
-                    $plural='';
-                $descricao = $qnde[count($sessoes)] . ' (' . count($sessoes) . ') '.(count($sessoes)>1?'sessões':'sessão').' de psicoterapia realizadas no'.$plural.' dia'.$plural.':' . "\n" . $end_desc;
-            }
-            catch(\Exception $e){
+                    $plural = '';
+                $descricao = $qnde[count($sessoes)] . ' (' . count($sessoes) . ') ' . (count($sessoes) > 1 ? 'sess&#245;es' : 'sess&#227;o') . ' de psicoterapia realizada' . $plural . ' no' . $plural . ' dia' . $plural . ':' . "\n" . $end_desc;
+            } catch (\Exception $e) {
                 $descricao = $e->getMessage();
             }
             try {
-                $valor_sessao =  $lista['rawProperties']["Valor Sessão"]["number"];
+                $valor_sessao = $lista['rawProperties']["Valor Sessão"]["number"];
             } catch (\Exception $e) {
-                $valor_sessao =  0;
+                $valor_sessao = 0;
             }
             try {
-                $valor_fixo =  $lista['rawProperties']["Valor Fixo"]["number"];
+                $valor_fixo = $lista['rawProperties']["Valor Fixo"]["number"];
             } catch (\Exception $e) {
                 $valor_fixo = 0;
             }
             try {
-                $qnde_sessoes_fixo =  $lista['rawProperties']["Qnde Sessões Fixas"]["number"];
+                $qnde_sessoes_fixo = $lista['rawProperties']["Qnde Sessões Fixas"]["number"];
             } catch (\Exception $e) {
-                $qnde_sessoes_fixo =  0;
+                $qnde_sessoes_fixo = 0;
+            }
+
+            if ($valor_fixo > 0) {
+                $total = $valor_fixo;
+            } else {
+                $total = count($sessoes) * $valor_sessao;
+            }
+
+            $paciente = Paciente::firstOrCreate(['notionid'=>$id,'nome'=>$nome]);
+
+            if($total>0){
+                $nota = NotaFiscal::firstOrNew(['id' => $numero_nota]);
+                $nota->valor = $total;
+                $nota->ano = $ano;
+                $nota->mes = $mes;
+                $nota->descricao = $descricao;
+                $nota->paciente_id = $paciente->id;
+                $nota->save();
+
+                $numero_nota++;
+
             }
 
 
-            $total = (count($sessoes)-$qnde_sessoes_fixo)*$valor_sessao+$valor_fixo;
+        }
+        return response('Importado',200);
+    }
+    public function gerarArquivo($ids){
+        $notas = NotaFiscal::whereIn('id',$ids)->get();
 
+        $xw = xmlwriter_open_memory();
+        xmlwriter_set_indent($xw, 1);
+        $res = xmlwriter_set_indent_string($xw, ' ');
+        xmlwriter_start_document($xw, '1.0', 'utf-8');
+        // A first element
+        xmlwriter_start_element($xw, 'nfe');
 
-
-
-            $paciente = Paciente::where('notionid',$id)->first();
-            if($paciente && $total>0) {
+        foreach($notas as $nota){
+            $paciente = Paciente::find($nota->paciente_id);
 
                 //Início da nota
                 xmlwriter_start_element($xw, 'notafiscal');
@@ -98,7 +128,7 @@ class NotaFiscalController extends Controller
 
                         //NUmeroNota
                         xmlwriter_start_element($xw, 'numeronota');
-                        xmlwriter_text($xw, $numero_nota);
+                        xmlwriter_text($xw, $nota->id);
                         xmlwriter_end_element($xw); // NumeroNota
 
                         //IM
@@ -108,7 +138,7 @@ class NotaFiscalController extends Controller
 
                         //Emissão
                         xmlwriter_start_element($xw, 'dataemissao');
-                        xmlwriter_text($xw, '20/03/2024');
+                        xmlwriter_text($xw, '31/03/2024');
                         xmlwriter_end_element($xw);
 
                     xmlwriter_end_element($xw); // dadosprestador
@@ -188,7 +218,7 @@ class NotaFiscalController extends Controller
 
                         }
                         else{
-                            $descricao.= '['.$paciente->nome.']';
+                            $nota->descricao.= '['.$paciente->nome.']';
 
                             //documento
                             xmlwriter_start_element($xw, 'documento');
@@ -280,7 +310,7 @@ class NotaFiscalController extends Controller
 
                         //municipio
                         xmlwriter_start_element($xw, 'cidade');
-                        xmlwriter_text($xw, ('São Carlos'));
+                        xmlwriter_text($xw, ('S&#227;o Carlos'));
                         xmlwriter_end_element($xw);
 
                         //uf
@@ -300,11 +330,11 @@ class NotaFiscalController extends Controller
                         xmlwriter_start_element($xw, 'item');
                             //Descricao
                             xmlwriter_start_element($xw, 'descricao');
-                            xmlwriter_text($xw, ($descricao));
+                            xmlwriter_text($xw, ($nota->descricao));
                             xmlwriter_end_element($xw);
                             //valor
                             xmlwriter_start_element($xw, 'valor');
-                            xmlwriter_text($xw, $total);
+                            xmlwriter_text($xw, $nota->valor);
                             xmlwriter_end_element($xw);
                             //valor
                             xmlwriter_start_element($xw, 'codigo');
@@ -316,10 +346,7 @@ class NotaFiscalController extends Controller
                     xmlwriter_end_element($xw); // detalheservico
 
                 xmlwriter_end_element($xw); // notafiscal
-                $numero_nota++;
-            }//if paciente & valor >0
-
-        }//foreach item do notion
+        }//foreach
 
         xmlwriter_end_element($xw); // Nfse
         xmlwriter_end_element($xw); // Nfse
