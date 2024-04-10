@@ -21,5 +21,7 @@ Route::get('/', function () {
 });
 Route::get('pacientes', [PacienteController::class,'index']);
 Route::get('pacientes/sincronizar', [PacienteController::class,'sincronizar']);
+Route::get('pacientes/alterar/{id}', [PacienteController::class,'edit']);
+Route::post('pacientes/alterar/{id}', [PacienteController::class,'update']);
 Route::get('notas',[NotaFiscalController::class,'index']);
 Route::get('gerar-notas/{mes}/{ano}',[NotaFiscalController::class,'importarNotion']);

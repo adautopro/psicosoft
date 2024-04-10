@@ -152,7 +152,7 @@
                                     </td>
                                     <td>
 
-                                        <a href="#" class="btn icon btn-sm btn-outline-warning"><i class="bi bi-exclamation-triangle"></i></a>&nbsp;
+                                        <a href="/pacientes/alterar/{{$paciente->id}}" class="btn icon btn-sm btn-outline-warning"><i class="fa fa-edit"></i></a>&nbsp;
                                         <a href="#" class="btn icon btn-sm btn-outline-info"><i class="bi bi-info-circle-fill"></i></a>&nbsp;
                                         <a href="#" class="btn icon btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>&nbsp;
 

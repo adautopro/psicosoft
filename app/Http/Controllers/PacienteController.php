@@ -64,4 +64,16 @@ class PacienteController extends Controller
         $pacientes = Paciente::all();
         return view('pacientes')->with('pacientes',$pacientes);
     }
+
+    public function edit(int $id){
+        $paciente = Paciente::findOrFail($id);
+        return view('pacientes-edit')->with('paciente',$paciente);
+    }
+
+    public function update(Request $request){
+        $array_nome = explode(' ',$request->nome);
+
+        return redirect('/pacientes')->with('success',['As alterações no cadastro de '.$array_nome[0].' foram salvos']);
+
+    }
 }
