@@ -9,16 +9,22 @@ class Paciente extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable = ['notionid','nome'];
 
-    public static function sync($id,$nome,$cpf,$email){
+    public static function sync($id,$nome,$cpf){
         $paciente = Paciente::where('notionid',$id)->first();
         if(!$paciente){
            $paciente = new Paciente();
            $paciente->notionid = $id;
         }
-        $paciente->nome = $nome;
-        $paciente->cpf = $cpf;
-        $paciente->email = $email;
+        if($nome)
+            $paciente->nome = $nome;
+        else
+            throw new  \Exception('sem nome');
+        if($cpf)
+            $paciente->cpf = $cpf;
+
+
         $paciente->save();
 
         return true;

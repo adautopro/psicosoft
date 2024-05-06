@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - PsicoSoft</title>
-
     @include('blocks.header')
+    <title>Home - @yield('app_name')</title>
+
     @yield('imports')
     <link rel="stylesheet" href="assets/extensions/simple-datatables/style.css">
     <link rel="stylesheet" href="./assets/compiled/css/table-datatable.css">
@@ -23,7 +23,7 @@
                         <div class="logo">
 
                             <!-- <a href="index.html"><img src="./assets/compiled/svg/logo.svg" alt="Logo" srcset=""></a>-->
-                            <small>Psicosoft</small>
+                            <small>@yield('app_name')</small>
                         </div>
                         <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -97,12 +97,13 @@
                         </div>
                         <div class="card-body">
                             <div class="buttons">
+                                <a href="pacientes/cadastrar" class="btn btn-primary"><i class="bi bi-plus"></i> Criar</a>
                                 <button type="button" class="btn btn-outline-primary block" data-bs-toggle="modal" data-bs-target="#importarDados">
-                                    Importar dados
+                                    <i class="bi bi-file-arrow-down"></i> Importar do Notion
                                 </button>
                                 @include('blocks.modal-sync')
-                                <a href="#" class="btn btn-secondary">Apagar Selecionados</a>
-                                <a href="#" class="btn btn-info">Selecionar todos</a>
+                                <a href="#" class="btn btn-outline-primary"><i class="bi bi-check2-square"></i> Selecionar todos</a>
+                                <a href="#" class="btn btn-outline-warning"><i class="bi bi-trash"></i> Apagar Selecionados</a>
 
                             </div>
 
@@ -152,7 +153,7 @@
                                     </td>
                                     <td>
 
-                                        <a href="/pacientes/alterar/{{$paciente->id}}" class="btn icon btn-sm btn-outline-warning"><i class="fa fa-edit"></i></a>&nbsp;
+                                        <a href="/pacientes/alterar/{{$paciente->id}}" class="btn icon btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></a>&nbsp;
                                         <a href="#" class="btn icon btn-sm btn-outline-info"><i class="bi bi-info-circle-fill"></i></a>&nbsp;
                                         <a href="#" class="btn icon btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>&nbsp;
 
@@ -200,7 +201,6 @@
     @yield('final_imports')
     <script src="assets/extensions/simple-datatables/umd/simple-datatables.js"></script>
     <script src="assets/static/js/pages/simple-datatables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         function importar(){
             $.ajax({

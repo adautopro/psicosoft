@@ -2,7 +2,7 @@
     <li class="sidebar-title">Menu</li>
 
     <li class="sidebar-item active ">
-        <a href="index.html" class='sidebar-link'>
+        <a href="/home" class='sidebar-link'>
             <i class="bi bi-house-fill"></i>
             <span>Home</span>
         </a>
@@ -32,4 +32,11 @@
             <span>Pacientes</span>
         </a>
     </li>
+    <li class="sidebar-item">
+        <a href="#" class='sidebar-link' id="logout">
+            <i class="bi bi-person-fill-lock "></i>
+            <span>Logout</span>
+        </a>
+    </li>
 </ul>
+

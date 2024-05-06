@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Psimo</title>
+
 
     @include('blocks.header')
+    <title>Home - @yield('app_name')</title>
+
     @yield('imports')
+
     <link rel="stylesheet" href="assets/extensions/simple-datatables/style.css">
     <link rel="stylesheet" href="./assets/compiled/css/table-datatable.css">
 
@@ -23,7 +26,7 @@
                         <div class="logo">
 
                             <!-- <a href="index.html"><img src="./assets/compiled/svg/logo.svg" alt="Logo" srcset=""></a>-->
-                            <small>Psimo</small>
+                            <small>@yield('app_name')</small>
                         </div>
                         <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -90,6 +93,7 @@
                         </div>
                     </div>
                 </div>
+
                 <section class="section">
                     <div class="card">
                         <div class="card-header">
@@ -97,30 +101,36 @@
                         </div>
                         <div class="card-body">
                             <div class="buttons">
+
+                                <a href="/notas/cadastrar" class="btn btn-primary"><i class="bi bi-plus"></i> Criar</a>
                                 <button type="button" class="btn btn-outline-primary block" data-bs-toggle="modal" data-bs-target="#importarNotas">
-                                    Importar dados
+                                    <i class="bi bi-file-arrow-down"></i> Importar do Notion
                                 </button>
-                                @include('blocks.modal-importar-notas')
-                                <a href="#" class="btn btn-secondary">Apagar Selecionados</a>
-                                <a href="#" class="btn btn-info">Selecionar todos</a>
+                                <button type="button" class="btn btn-outline-primary block" onclick="exportarSelecionadas()">
+                                    <i class="bi bi-filetype-xml"></i> Exportar selecionadas
+                                </button>
 
                             </div>
 
                         </div>
                     </div>
                 </section>
+                @include('blocks.alerts')
                 <section class="section">
+                    @include('blocks.modal-importar-notas')
+                    @include('blocks.modal-apagar-notas')
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">
-                                Listagem Completa
-                            </h5>
+                            <div class="col-md-2 ">
+                                <input type="checkbox" class="form-check-input form-check-primary form-check-glow" onclick="selecionarTodos(this)"> Selecionar todos
+                            </div>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped" id="table1">
                                 <thead>
                                 <tr>
                                     <th>
+
                                        NUMERO
                                     </th>
                                     <th>PESSOA</th>
@@ -137,7 +147,7 @@
                                     <td>
                                         <div class="form-check">
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="form-check-input form-check-primary form-check-glow"  name="paciente[{{$nota->id}}]" id="checkboxGlow{{$nota->id}}">
+                                                <input type="checkbox" class="form-check-input form-check-primary form-check-glow"  name="paciente[{{$nota->id}}]" value="{{$nota->id}}">
                                                 <label class="form-check-label" for="checkboxGlow{{$nota->id}}">&nbsp;{{$nota->id}}</label>
                                             </div>
                                         </div>
@@ -146,15 +156,30 @@
                                     <td>{{$nota->getNome()}}</td>
                                     <td>{{$nota->mes}}/{{$nota->ano}}</td>
                                     <td>R$ {{number_format($nota->valor,2,',','.')}}</td>
-                                    <td>{{html_entity_decode(explode('realizada',$nota->descricao,)[0], ENT_QUOTES, 'UTF-8') }}</td>
+                                    <td>{{html_entity_decode($nota->descricao, ENT_QUOTES, 'UTF-8') }}</td>
+                                    <!--<td>{{html_entity_decode(explode('realizada',$nota->descricao,)[0], ENT_QUOTES, 'UTF-8') }}</td>-->
                                     <td>
-                                        <span class="badge bg-success">{{$nota->status}}</span>
+                                        @switch($nota->status)
+                                            @case('emitida')
+                                                <span class="badge bg-info">
+                                                @break
+                                            @case('lancada')
+                                                <span class="badge bg-success">
+                                                @break
+                                            @case('importada')
+                                                <span class="badge bg-primary">
+                                                @break
+
+
+                                            @endswitch
+
+                                            {{$nota->status}}</span>
                                     </td>
                                     <td>
 
-                                        <a href="#" class="btn icon btn-sm btn-outline-warning"><i class="bi bi-exclamation-triangle"></i></a>&nbsp;
-                                        <a href="#" class="btn icon btn-sm btn-outline-info"><i class="bi bi-info-circle-fill"></i></a>&nbsp;
-                                        <a href="#" class="btn icon btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>&nbsp;
+                                        <a href="#" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></a>&nbsp;
+                                        <a href="/notas/exportar/{{$nota->id}}" target="_blank" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-filetype-xml"></i></a>&nbsp;
+                                        <a href="#" class="btn icon btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apagarNotas" onclick="excluirIndividual('{{$nota->id}}')"><i class="bi bi-trash"></i></a>&nbsp;
 
 
                                     </td>
@@ -173,17 +198,13 @@
                         </div>
                         <div class="card-body">
                             <div class="buttons">
-                                <a href="#" class="btn icon icon-left btn-outline-primary">
-                                    <i class="bi bi-check-square-fill"></i>
-                                    Selecionar todos
-                                </a>
                                 <a href="#" class="btn btn-outline-primary">
                                     <i class="bi bi-check2-square"></i>
                                     Apagar Selecionados
                                 </a>
-                                <a href="#" class="btn btn-outline-primary">
+                                <a href="#" class="btn btn-outline-primary" onclick="exportar()">
                                     <i class="bi bi-bookmark-check-fill"></i>
-                                    Alguma ação em lote
+                                    Exportar selecionados
                                 </a>
 
                             </div>
@@ -202,6 +223,14 @@
     <script src="assets/static/js/pages/simple-datatables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        var cortar = '';
+        $(document).ready(function() {
+            $(".select-all").click(function() {
+                var checkBoxes = $("input[name=paciente\\[\\]]");
+                checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+                console.log('fui clicado');
+            });
+        });
         function importar(){
             if(!$('#mes').val()==='00' || $('#ano').val()<2023){
                 alert("Selecione o período corretamente"+$('#mes').val());
@@ -209,7 +238,7 @@
             }
 
             $.ajax({
-                url: "/gerar-notas/"+$('#mes').val()+"/"+$('#ano').val(),
+                url: "/notas/importar/"+$('#mes').val()+"/"+$('#ano').val()+"/"+$('#nota').val(),
                 context: document.body,
                 beforeSend: function() {
                     $("#modal-sync").html('Carregando...');
@@ -217,8 +246,71 @@
             }).done(function(data) {
                 $("#modal-sync").html(data);
             }).fail(function(data) {
-                $("#modal-sync").html('<p> Erro ao executar a solicitação: '+data.statusText+'</p>');
+                console.log(Object.keys(data));
+                if(data.status === '400')
+                    $("#modal-sync").html('<p> Erro ao executar a solicitação: '+data.responseText+'</p>');
             });
+        }
+
+        function exportar(){
+            var itens = Array;
+            $('input:checkbox.class').each(function () {
+                if(this.checked)
+                    itens.append($(this).val());
+            });
+            console.log(itens);
+
+        }
+
+        function selecionarTodos(campo){
+            $("input:checkbox[name^=paciente]").each(
+                function(){
+                    $(this).prop("checked", campo.checked)
+                }
+            );
+        }
+        function exportarSelecionadas(){
+            let itens =''
+            $("input:checkbox[name^=paciente]:checked").each(
+                function(){
+                    itens+=$(this).val()+',';
+                }
+            );
+
+            console.log(itens)
+            if(itens !== '')
+                window.open('/notas/exportar/'+itens, '_blank').focus();
+
+        }
+        function excluirIndividual(id){
+            cortar = id;
+
+        }
+        function excluirSelecionadas(){
+            let itens =''
+            $("input:checkbox[name^=paciente]:checked").each(
+                function(){
+                    itens+=$(this).val()+',';
+                }
+            );
+
+            console.log(itens);
+            if(itens !== '')
+                excluir(itens);
+
+
+        }
+        function excluir(ids){
+            $.ajax({
+                type:'POST',
+                url:'/notas/excluir',
+                data:ids,
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                success:function(data){
+                    window.location.href = '/'
+                }
+            });
+
         }
     </script>
 </body>

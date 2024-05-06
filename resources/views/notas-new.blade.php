@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edição de Paciente</title>
+    <title>Cadastro manual de nota</title>
 
     @include('blocks.header')
     @yield('imports')
@@ -74,40 +74,51 @@
                 <div class="page-title">
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3>Alteração de dados do paciente</h3>
-                            <p class="text-subtitle text-muted">Use para modificar os dados do paciente, mas não se esqueça de salvar.</p>
+                            <h3>Adição manual de NF</h3>
+                            <p class="text-subtitle text-muted">Adição de itens individuais.</p>
                         </div>
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                    <li class="breadcrumb-item"><a href="/pacientes">pacientes</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">alteração de dados</li>
+                                    <li class="breadcrumb-item"><a href="/notas">pacientes</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">cadastro manual</li>
                                 </ol>
                             </nav>
                         </div>
                     </div>
                 </div>
                 <!-- FIM Título subtítulo e breadcomb -->
-@include('blocks.alerts')
 
+                @include('blocks.alerts')
                 <!-- Início do conteúdo -->
 
                 <section class="section">
                     <form method="POST" action="?">
                         @csrf
-                        <input type="hidden" name="id" value="{{$paciente->id}}">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Paciente ID {{$paciente->id}} ({{$paciente->notionid}})</h4>
+                            <h4 class="card-title">Cadastro Manual</h4>
                         </div>
 
                         <div class="card-body">
                             <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="basicInput">Número da nota</label>
+                                        <input type="number" class="form-control" name="nota"  placeholder="Opcional">
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="basicInput">Nome</label>
-                                        <input type="text" class="form-control" name="nome" value="{{$paciente->nome}}" placeholder="Nome completo">
+                                        <label for="basicInput">Paciente</label>
+                                        <input type="text" id="search" class="form-control" name="nome"  placeholder="Escreva e escolha">
+                                        <input type="hidden" name="paciente_id" id="paciente">
+                                        <div id="display" class="list-group" ></div>
                                     </div>
 
                                 </div>
@@ -116,108 +127,76 @@
 
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="disabledInput">E-mail</label>
-                                        <input type="email" class="form-control"  placeholder="nom@provedor" name="email" value="{{$paciente->email}}" >
+                                        <label for="disabledInput">Valor</label>
+                                        <input type="number" class="form-control"  placeholder="Valor" name="valor" >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="disabledInput">CPF</label>
-                                        <input type="text" class="form-control"  placeholder="Somente números" name="cpf" value="{{$paciente->cpf}}" >
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">CPF do Responsável</label>
-                                        <input type="text" class="form-control"  placeholder="CPF, somente números" name="responsavel" value="{{$paciente->responsavel}}" >
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">CEP</label>
-                                        <input type="text" class="form-control" name="cep" value="{{$paciente->cep}}" placeholder="Somente números" >
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="disabledInput">Endereço</label>
-                                        <input type="text" class="form-control" name="logradouro" value="{{$paciente->logradouro}}" placeholder="Rua, Av. Alameda ..." >
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">Número</label>
-                                        <input type="text" class="form-control" name="numero" value="{{$paciente->numero}}" >
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">Complemento</label>
-                                        <input type="text" class="form-control" name="complemento" value="{{$paciente->complemento}}" placeholder="Rua, Av. Alameda ..." >
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">Bairro</label>
-                                        <input type="text" class="form-control" name="bairro" value="{{$paciente->bairro}}" placeholder="Rua, Av. Alameda ..." >
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="cidade">Cidade</label>
-                                        <input type="text" class="form-control" name="cidade" value="{{$paciente->cidade}}" placeholder="Rua, Av. Alameda ..." >
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="disabledInput">UF</label>
-                                        <select class="form-select" name="uf">
-                                            <option value="" {{$paciente->uf==""?'selected':''}}>Selecione </option>
-                                            <option value="AC" {{$paciente->uf=="AC"?'selected':''}}>Acre</option>
-                                            <option value="AL" {{$paciente->uf=="AL"?'selected':''}}>Alagoas</option>
-                                            <option value="AP" {{$paciente->uf=="AP"?'selected':''}}>Amapá</option>
-                                            <option value="AM" {{$paciente->uf=="AM"?'selected':''}}>Amazonas</option>
-                                            <option value="BA" {{$paciente->uf=="BA"?'selected':''}}>Bahia</option>
-                                            <option value="CE" {{$paciente->uf=="CE"?'selected':''}}>Ceará</option>
-                                            <option value="DF" {{$paciente->uf=="DF"?'selected':''}}>Distrito Federal</option>
-                                            <option value="ES" {{$paciente->uf=="ES"?'selected':''}}>Espirito Santo</option>
-                                            <option value="GO" {{$paciente->uf=="GO"?'selected':''}}>Goiás</option>
-                                            <option value="MA" {{$paciente->uf=="MA"?'selected':''}}>Maranhão</option>
-                                            <option value="MS" {{$paciente->uf=="MS"?'selected':''}}>Mato Grosso do Sul</option>
-                                            <option value="MT" {{$paciente->uf=="MT"?'selected':''}}>Mato Grosso</option>
-                                            <option value="MG" {{$paciente->uf=="MG"?'selected':''}}>Minas Gerais</option>
-                                            <option value="PA" {{$paciente->uf=="PA"?'selected':''}}>Pará</option>
-                                            <option value="PB" {{$paciente->uf=="PB"?'selected':''}}>Paraíba</option>
-                                            <option value="PR" {{$paciente->uf=="PR"?'selected':''}}>Paraná</option>
-                                            <option value="PE" {{$paciente->uf=="PE"?'selected':''}}>Pernambuco</option>
-                                            <option value="PI" {{$paciente->uf=="PI"?'selected':''}}>Piauí</option>
-                                            <option value="RJ" {{$paciente->uf=="RJ"?'selected':''}}>Rio de Janeiro</option>
-                                            <option value="RN" {{$paciente->uf=="RN"?'selected':''}}>Rio Grande do Norte</option>
-                                            <option value="RS" {{$paciente->uf=="RS"?'selected':''}}>Rio Grande do Sul</option>
-                                            <option value="RO" {{$paciente->uf=="RO"?'selected':''}}>Rondônia</option>
-                                            <option value="RR" {{$paciente->uf=="RR"?'selected':''}}>Roraima</option>
-                                            <option value="SC" {{$paciente->uf=="SC"?'selected':''}}>Santa Catarina</option>
-                                            <option value="SP" {{$paciente->uf=="SP"?'selected':''}}>São Paulo</option>
-                                            <option value="SE" {{$paciente->uf=="SE"?'selected':''}}>Sergipe</option>
-                                            <option value="TO" {{$paciente->uf=="TO"?'selected':''}}>Tocantins</option>
-                                            <option value="EX" {{$paciente->uf=="EX"?'selected':''}}>Outro país</option>
+                                        <label for="disabledInput">Mês</label>
+                                        <select class="form-select" name="mes" id="mes">
+                                            <option value="00">Escolha o mês</option>
+                                            <option value="01">Janeiro</option>
+                                            <option value="02">Fevereiro</option>
+                                            <option value="03">Março</option>
+                                            <option value="04">Abril</option>
+                                            <option value="05">Maio</option>
+                                            <option value="06">Junho</option>
+                                            <option value="07">Julho</option>
+                                            <option value="08">Agosto</option>
+                                            <option value="09">Setembro</option>
+                                            <option value="10">Outubro</option>
+                                            <option value="11">Novembro</option>
+                                            <option value="12">Dezembro</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="disabledInput">País</label>
-                                        <input type="text" class="form-control" name="pais" value="{{$paciente->pais}}" >
+                                        <label for="disabledInput">Ano</label>
+                                        <input type="number" class="form-control"  placeholder="Ano" name="ano" value="2024" >
                                     </div>
                                 </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="disabledInput">Emisão</label>
+                                        <input type="date" class="form-control" name="emissao" placeholder="Data" >
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="disabledInput">Status</label>
+                                        <select class="form-select" name="status">
+                                            <option value="lancada">Lançada</option>
+                                            <option value="emitida">Emitida</option>
+                                            <option value="importada">Importada</option>
+                                            <option value="editada">Editada</option>
+                                            <option value="cancelada">Cancelada</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="disabledInput">Link</label>
+                                        <input type="text" class="form-control" name="link" placeholder="Link para download" >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="cidade">Descrição</label>
+                                        <textarea class="form-control" name="descricao" >00 Sessões de psicoterapia realizadas em:
+/2024 de forma on-line pela Dra. Larissa Pires Ruiz. CRP 06/12575583.
+
+                                        </textarea>
+                                    </div>
+                                </div>
+
 
                             </div>
                             <div class="row">
@@ -242,5 +221,46 @@
         </div>
     </div>
     @yield('final_imports')
+<script>
+    //Getting value from "ajax.php".
+    function fill(Value,Id) {
+        //Assigning value to "search" div in "search.php" file.
+        $('#search').val(Value);
+        $('#paciente').val(Id);
+        //Hiding "display" div in "search.php" file.
+        $('#display').hide();
+    }
+    $(document).ready(function() {
+        //On pressing a key on "Search box" in "search.php" file. This function will be called.
+        $("#search").keyup(function() {
+            //Assigning search box value to javascript variable named as "name".
+            var name = $('#search').val();
+            //Validating, if "name" is empty.
+            if (name == "") {
+                //Assigning empty value to "display" div in "search.php" file.
+                $("#display").html("");
+
+            }
+            //If name is not empty.
+            else {
+                //AJAX is called.
+                $.ajax({
+                    //AJAX type is "Post".
+                    type: "GET",
+                    //Data will be sent to "ajax.php".
+                    url: "/pacientes/search/"+name,
+                    //Data, that will be sent to "ajax.php".
+
+                    //If result found, this funtion will be called.
+                    success: function(html) {
+                        //Assigning result to "display" div in "search.php" file.
+                        $("#display").html(html).show();
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

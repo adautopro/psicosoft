@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edição de Paciente</title>
+    <title>Cadastro de Paciente</title>
 
     @include('blocks.header')
     @yield('imports')
@@ -82,24 +82,23 @@
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="/">Home</a></li>
                                     <li class="breadcrumb-item"><a href="/pacientes">pacientes</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">alteração de dados</li>
+                                    <li class="breadcrumb-item active" aria-current="page">cadastro manual</li>
                                 </ol>
                             </nav>
                         </div>
                     </div>
                 </div>
                 <!-- FIM Título subtítulo e breadcomb -->
-@include('blocks.alerts')
 
+                @include('blocks.alerts')
                 <!-- Início do conteúdo -->
 
                 <section class="section">
                     <form method="POST" action="?">
                         @csrf
-                        <input type="hidden" name="id" value="{{$paciente->id}}">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Paciente ID {{$paciente->id}} ({{$paciente->notionid}})</h4>
+                            <h4 class="card-title">Cadastro Manual</h4>
                         </div>
 
                         <div class="card-body">
@@ -107,7 +106,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="basicInput">Nome</label>
-                                        <input type="text" class="form-control" name="nome" value="{{$paciente->nome}}" placeholder="Nome completo">
+                                        <input type="text" class="form-control" name="ñome"  placeholder="Nome completo">
                                     </div>
 
                                 </div>
@@ -117,19 +116,19 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">E-mail</label>
-                                        <input type="email" class="form-control"  placeholder="nom@provedor" name="email" value="{{$paciente->email}}" >
+                                        <input type="email" class="form-control"  placeholder="nom@provedor" name="email" >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">CPF</label>
-                                        <input type="text" class="form-control"  placeholder="Somente números" name="cpf" value="{{$paciente->cpf}}" >
+                                        <input type="text" class="form-control"  placeholder="Somente números" name="cpf"  >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">CPF do Responsável</label>
-                                        <input type="text" class="form-control"  placeholder="CPF, somente números" name="responsavel" value="{{$paciente->responsavel}}" >
+                                        <input type="text" class="form-control"  placeholder="CPF, somente números" name="responsavel"  >
                                     </div>
                                 </div>
 
@@ -138,13 +137,13 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">CEP</label>
-                                        <input type="text" class="form-control" name="cep" value="{{$paciente->cep}}" placeholder="Somente números" >
+                                        <input type="text" class="form-control" name="cep" placeholder="Somente números" >
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="disabledInput">Endereço</label>
-                                        <input type="text" class="form-control" name="logradouro" value="{{$paciente->logradouro}}" placeholder="Rua, Av. Alameda ..." >
+                                        <input type="text" class="form-control" name="logradouro" placeholder="Rua, Av. Alameda ..." >
                                     </div>
                                 </div>
                             </div>
@@ -152,19 +151,19 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Número</label>
-                                        <input type="text" class="form-control" name="numero" value="{{$paciente->numero}}" >
+                                        <input type="text" class="form-control" name="numero" >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Complemento</label>
-                                        <input type="text" class="form-control" name="complemento" value="{{$paciente->complemento}}" placeholder="Rua, Av. Alameda ..." >
+                                        <input type="text" class="form-control" name="complemento"  placeholder="Rua, Av. Alameda ..." >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Bairro</label>
-                                        <input type="text" class="form-control" name="bairro" value="{{$paciente->bairro}}" placeholder="Rua, Av. Alameda ..." >
+                                        <input type="text" class="form-control" name="bairro"  placeholder="Rua, Av. Alameda ..." >
                                     </div>
                                 </div>
 
@@ -173,49 +172,49 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="cidade">Cidade</label>
-                                        <input type="text" class="form-control" name="cidade" value="{{$paciente->cidade}}" placeholder="Rua, Av. Alameda ..." >
+                                        <input type="text" class="form-control" name="cidade" placeholder="Rua, Av. Alameda ..." >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">UF</label>
                                         <select class="form-select" name="uf">
-                                            <option value="" {{$paciente->uf==""?'selected':''}}>Selecione </option>
-                                            <option value="AC" {{$paciente->uf=="AC"?'selected':''}}>Acre</option>
-                                            <option value="AL" {{$paciente->uf=="AL"?'selected':''}}>Alagoas</option>
-                                            <option value="AP" {{$paciente->uf=="AP"?'selected':''}}>Amapá</option>
-                                            <option value="AM" {{$paciente->uf=="AM"?'selected':''}}>Amazonas</option>
-                                            <option value="BA" {{$paciente->uf=="BA"?'selected':''}}>Bahia</option>
-                                            <option value="CE" {{$paciente->uf=="CE"?'selected':''}}>Ceará</option>
-                                            <option value="DF" {{$paciente->uf=="DF"?'selected':''}}>Distrito Federal</option>
-                                            <option value="ES" {{$paciente->uf=="ES"?'selected':''}}>Espirito Santo</option>
-                                            <option value="GO" {{$paciente->uf=="GO"?'selected':''}}>Goiás</option>
-                                            <option value="MA" {{$paciente->uf=="MA"?'selected':''}}>Maranhão</option>
-                                            <option value="MS" {{$paciente->uf=="MS"?'selected':''}}>Mato Grosso do Sul</option>
-                                            <option value="MT" {{$paciente->uf=="MT"?'selected':''}}>Mato Grosso</option>
-                                            <option value="MG" {{$paciente->uf=="MG"?'selected':''}}>Minas Gerais</option>
-                                            <option value="PA" {{$paciente->uf=="PA"?'selected':''}}>Pará</option>
-                                            <option value="PB" {{$paciente->uf=="PB"?'selected':''}}>Paraíba</option>
-                                            <option value="PR" {{$paciente->uf=="PR"?'selected':''}}>Paraná</option>
-                                            <option value="PE" {{$paciente->uf=="PE"?'selected':''}}>Pernambuco</option>
-                                            <option value="PI" {{$paciente->uf=="PI"?'selected':''}}>Piauí</option>
-                                            <option value="RJ" {{$paciente->uf=="RJ"?'selected':''}}>Rio de Janeiro</option>
-                                            <option value="RN" {{$paciente->uf=="RN"?'selected':''}}>Rio Grande do Norte</option>
-                                            <option value="RS" {{$paciente->uf=="RS"?'selected':''}}>Rio Grande do Sul</option>
-                                            <option value="RO" {{$paciente->uf=="RO"?'selected':''}}>Rondônia</option>
-                                            <option value="RR" {{$paciente->uf=="RR"?'selected':''}}>Roraima</option>
-                                            <option value="SC" {{$paciente->uf=="SC"?'selected':''}}>Santa Catarina</option>
-                                            <option value="SP" {{$paciente->uf=="SP"?'selected':''}}>São Paulo</option>
-                                            <option value="SE" {{$paciente->uf=="SE"?'selected':''}}>Sergipe</option>
-                                            <option value="TO" {{$paciente->uf=="TO"?'selected':''}}>Tocantins</option>
-                                            <option value="EX" {{$paciente->uf=="EX"?'selected':''}}>Outro país</option>
+                                            <option value="" >Selecione </option>
+                                            <option value="EX">Outro país</option>
+                                            <option value="AC" >Acre</option>
+                                            <option value="AL">Alagoas</option>
+                                            <option value="AP">Amapá</option>
+                                            <option value="AM">Amazonas</option>
+                                            <option value="BA">Bahia</option>
+                                            <option value="CE">Ceará</option>
+                                            <option value="DF">Distrito Federal</option>
+                                            <option value="ES">Espirito Santo</option>
+                                            <option value="GO">Goiás</option>
+                                            <option value="MA">Maranhão</option>
+                                            <option value="MS">Mato Grosso do Sul</option>
+                                            <option value="MT">Mato Grosso</option>
+                                            <option value="MG">Minas Gerais</option>
+                                            <option value="PA">Pará</option>
+                                            <option value="PB">Paraíba</option>
+                                            <option value="PR">Paraná</option>
+                                            <option value="PE">Pernambuco</option>
+                                            <option value="PI">Piauí</option>
+                                            <option value="RJ">Rio de Janeiro</option>
+                                            <option value="RN">Rio Grande do Norte</option>
+                                            <option value="RS">Rio Grande do Sul</option>
+                                            <option value="RO">Rondônia</option>
+                                            <option value="RR">Roraima</option>
+                                            <option value="SC">Santa Catarina</option>
+                                            <option value="SP">São Paulo</option>
+                                            <option value="SE">Sergipe</option>
+                                            <option value="TO">Tocantins</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">País</label>
-                                        <input type="text" class="form-control" name="pais" value="{{$paciente->pais}}" >
+                                        <input type="text" class="form-control" name="pais" >
                                     </div>
                                 </div>
 

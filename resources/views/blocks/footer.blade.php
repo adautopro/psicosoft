@@ -15,6 +15,23 @@
     <script src="/assets/static/js/components/dark.js"></script>
     <script src="/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="/assets/compiled/js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '#logout', function () {
+                $.ajax({
+                    type:'POST',
+                    url:'/logout',
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    success:function(data){
+                        window.location.href = '/'
+                    }
+                });
+            });
+        });
+
+
+    </script>
 
 
     <!-- Need: Apexcharts -->

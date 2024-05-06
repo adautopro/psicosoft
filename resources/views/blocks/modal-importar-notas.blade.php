@@ -27,12 +27,20 @@
                         <option value="12">Dezembro</option>
                     </select>
                 </div>
-                <label for="password">Ano </label>
+                <label for="ano">Ano </label>
                 <div class="form-group">
                     <input id="ano" type="number" value="2024" class="form-control">
                 </div>
+                <label for="nota">Nota inicial </label>
+                <div class="form-group">
+                    <input id="nota" type="number" value="0" class="form-control">
+                </div>
             </div>
             <div class="modal-footer">
+                <a class="btn btn-light-secondary" href="#" onclick="javascript:window.location.reload()">
+                    <i class="bx bx-x d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Reset</span>
+                </a>
                 <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
                     <i class="bx bx-x d-block d-sm-none"></i>
                     <span class="d-none d-sm-block">Close</span>

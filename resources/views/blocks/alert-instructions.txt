@@ -1,0 +1,17 @@
+
+->with('alerts',[
+                'warning'=>[
+                    'Atenção'=>'minha mensagem de warning 1',
+                    'minha mensagem de warning 2',
+                ],
+                'danger'=>[
+                    'minha mensagem de danger 1'
+                ],
+                'info'=>[
+                ],
+                'success'=>[
+                    'minha mensagem de danger 1'
+                ],
+            ]);
+
+return redirect('/pacientes')->with('alerts',['success'=>['As alterações no cadastro foram salvos']]);

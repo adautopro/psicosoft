@@ -16,14 +16,18 @@ return new class extends Migration
             $table->string('notionid',100);
             $table->string('nome',100);
             $table->string('cpf',11);
-            $table->string('email',150);
-            $table->string('logradouro',100);
-            $table->string('numero',5);
-            $table->string('complemento',100);
-            $table->string('bairro',50);
-            $table->string('cidade',50);
-            $table->string('uf',2);
-            $table->string('país',30);
+            $table->string('responsavel',11)->nullable();
+            $table->string('telefone',11)->nullable();
+            $table->string('email',150)->nullable();
+            $table->string('logradouro',100)->nullable();
+            $table->string('numero',5)->nullable();
+            $table->string('complemento',100)->nullable();
+            $table->string('bairro',50)->nullable();
+            $table->string('cidade',50)->nullable();
+            $table->string('uf',2)->nullable();
+            $table->string('país',30)->nullable();
+            $table->string('cep',10)->nullable();
+            $table->string('tags',300)->nullable();
 
         });
     }

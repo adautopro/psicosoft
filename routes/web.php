@@ -19,9 +19,30 @@ Route::get('/', function () {
     //return view('welcome');
     return view('home');
 });
-Route::get('pacientes', [PacienteController::class,'index']);
-Route::get('pacientes/sincronizar', [PacienteController::class,'sincronizar']);
-Route::get('pacientes/alterar/{id}', [PacienteController::class,'edit']);
-Route::post('pacientes/alterar/{id}', [PacienteController::class,'update']);
-Route::get('notas',[NotaFiscalController::class,'index']);
-Route::get('gerar-notas/{mes}/{ano}',[NotaFiscalController::class,'importarNotion']);
+Route::get('home', function () {
+    //return view('welcome');
+    return view('home');
+});
+route::middleware(['auth'])->group( function(){
+    Route::prefix('pacientes')->group(function(){
+        Route::get('/', [PacienteController::class,'index']);
+        Route::get('sincronizar', [PacienteController::class,'sincronizar']);
+        Route::get('search/{keyword}',[PacienteController::class,'search']);
+        Route::get('cadastrar', [PacienteController::class,'create']);
+        Route::post('cadastrar', [PacienteController::class,'store']);
+        Route::get('alterar/{id}', [PacienteController::class,'edit']);
+        Route::post('alterar/{id}', [PacienteController::class,'update']);
+    });
+
+    Route::prefix('notas')->group(function(){
+        Route::get('/',[NotaFiscalController::class,'index']);
+        Route::get('importar/{mes}/{ano}/{nota}',[NotaFiscalController::class,'importarNotion']);
+        Route::get('exportar/{ids}',[NotaFiscalController::class,'gerarArquivo']);
+        Route::get('cadastrar',[NotaFiscalController::class,'create']);
+        Route::post('cadastrar',[NotaFiscalController::class,'store']);
+        Route::get('alterar/{id}',[NotaFiscalController::class,'edit']);
+        Route::post('alterar/{id}',[NotaFiscalController::class,'update']);
+
+
+    });
+});

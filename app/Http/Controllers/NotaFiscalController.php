@@ -15,12 +15,47 @@ class NotaFiscalController extends Controller
         $notas = NotaFiscal::all();
         return view('notas')->with('notas', $notas);
     }
-    public function importarNotion ($mes,$ano)
-    {
-        $qnde = array("Nenhuma", "Uma", "Duas", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze");
-        //https://www.php.net/manual/en/example.xmlwriter-simple.php
-        $numero_nota = 105;
 
+    public function create(){
+        /*$objeto = new NotaFiscal();
+        $colunas = \Illuminate\Support\Facades\Schema::getColumnListing($objeto->getTable());
+        $escreva='';
+        foreach($colunas as $value){
+            $escreva .= '$nota->'.$value.' = $request->'.$value.';</br>';
+        }
+        return $escreva;*/
+        return view('notas-new');
+    }
+
+    public function store(Request $request){
+
+        $nota = new NotaFiscal();
+        if(!empty($request->nota))
+            $nota->id = $request->nota;
+        $nota->valor = $request->valor;
+        $nota->ano = $request->ano;
+        $nota->mes = $request->mes;
+        $nota->descricao = $request->descricao;
+        $nota->link = $request->link;
+        $nota->emissao = $request->emissao;
+        $nota->status = $request->status;
+        $nota->paciente_id = $request->paciente_id;
+
+        try{
+            $nota->save();
+        }
+        catch(\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+        return redirect('/notas')->with('alerts',['success'=>['Nota salva']]);
+
+    }
+    public function importarNotion ($mes,$ano,$numero_nota)
+    {
+        if($mes == '00' || !is_numeric($mes) || $numero_nota == '0' || !is_numeric($numero_nota))
+            return response("Nota ou Mês inválidos",400);
+        $qnde = array("Nenhuma", "Uma", "Duas", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze");
 
 
 
@@ -82,11 +117,13 @@ class NotaFiscalController extends Controller
                 $qnde_sessoes_fixo = 0;
             }
 
-            if ($valor_fixo > 0) {
-                $total = $valor_fixo;
-            } else {
-                $total = count($sessoes) * $valor_sessao;
+            try {
+                $total = $lista['rawProperties']["Total"]["number"];
+            } catch (\Exception $e) {
+                $total = 0;
             }
+
+
 
             $paciente = Paciente::firstOrCreate(['notionid'=>$id,'nome'=>$nome]);
 
@@ -108,8 +145,9 @@ class NotaFiscalController extends Controller
         return response('Importado',200);
     }
     public function gerarArquivo($ids){
-        $notas = NotaFiscal::whereIn('id',$ids)->get();
-
+        //https://www.php.net/manual/en/example.xmlwriter-simple.php
+        $arr_ids = explode(',',$ids);
+        $notas = NotaFiscal::whereIn('id',$arr_ids)->get();
         $xw = xmlwriter_open_memory();
         xmlwriter_set_indent($xw, 1);
         $res = xmlwriter_set_indent_string($xw, ' ');
@@ -118,7 +156,11 @@ class NotaFiscalController extends Controller
         xmlwriter_start_element($xw, 'nfe');
 
         foreach($notas as $nota){
-            $paciente = Paciente::find($nota->paciente_id);
+            $pessoa = Paciente::find($nota->paciente_id);
+            if($pessoa->responsavel)
+                $paciente = Paciente::where('cpf',$pessoa->responsavel)->first();
+            else
+                $paciente = $pessoa;
 
                 //Início da nota
                 xmlwriter_start_element($xw, 'notafiscal');
@@ -138,7 +180,7 @@ class NotaFiscalController extends Controller
 
                         //Emissão
                         xmlwriter_start_element($xw, 'dataemissao');
-                        xmlwriter_text($xw, '31/03/2024');
+                        xmlwriter_text($xw, $nota->emissao);
                         xmlwriter_end_element($xw);
 
                     xmlwriter_end_element($xw); // dadosprestador
@@ -310,7 +352,8 @@ class NotaFiscalController extends Controller
 
                         //municipio
                         xmlwriter_start_element($xw, 'cidade');
-                        xmlwriter_text($xw, ('S&#227;o Carlos'));
+                        //xmlwriter_text($xw, ('S&#227;o Carlos'));
+                        xmlwriter_text($xw, ('Sao Carlos'));
                         xmlwriter_end_element($xw);
 
                         //uf
@@ -354,8 +397,9 @@ class NotaFiscalController extends Controller
 
         //return xmlwriter_output_memory($xw);
 
-
-        return response(xmlwriter_output_memory($xw),200)->header('Content-Type', 'application/xml','charset=UTF-8');
+        header('Content-type: text/xml; charset=utf-8');
+        header('Content-Disposition: attachment');
+        return response(xmlwriter_output_memory($xw),200)->header('Content-Type', 'application/xml','charset=utf-8');
 
 
         /*
