@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro manual de nota</title>
+    <title>Edição de nota</title>
 
     @include('blocks.header')
     @yield('imports')
@@ -74,15 +74,15 @@
                 <div class="page-title">
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3>Adição manual de NF</h3>
-                            <p class="text-subtitle text-muted">Adição de itens individuais.</p>
+                            <h3>Alteração manual de NF</h3>
+                            <p class="text-subtitle text-muted">Alteração de itens individuais.</p>
                         </div>
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="/">Home</a></li>
                                     <li class="breadcrumb-item"><a href="/notas">notas</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">cadastro manual</li>
+                                    <li class="breadcrumb-item active" aria-current="page">edição</li>
                                 </ol>
                             </nav>
                         </div>
@@ -98,7 +98,7 @@
                         @csrf
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Cadastro Manual</h4>
+                            <h4 class="card-title">Edição</h4>
                         </div>
 
                         <div class="card-body">
@@ -106,7 +106,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="basicInput">Número da nota</label>
-                                        <input type="number" class="form-control" name="nota"  placeholder="Opcional">
+                                        <input type="number" class="form-control " name="nota"  readonly="true" disabled placeholder="Opcional" value="{{$nota->id}}">
 
                                     </div>
 
@@ -116,8 +116,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="basicInput">Paciente</label>
-                                        <input type="text" id="search" class="form-control" name="nome"  placeholder="Escreva e escolha">
-                                        <input type="hidden" name="paciente_id" id="paciente">
+                                        <input type="text" id="search" class="form-control" name="nome"  placeholder="Escreva e escolha" value="{{$paciente->nome}}">
+                                        <input type="hidden" name="paciente_id" id="paciente" value="{{$nota->paciente_id}}">
                                         <div id="display" class="list-group" ></div>
                                     </div>
 
@@ -128,42 +128,33 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Valor</label>
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text">R$</span>
-                                            <input type="text" class="form-control" aria-label="Valor"  name="valor" required>
-                                            <span class="input-group-text">,00</span>
-                                        </div>
+                                        <input type="number" class="form-control"  placeholder="Valor" name="valor" value="{{$nota->valor}}">
                                     </div>
-                                    <!--
-                                    <div class="form-group">
-                                        <label for="disabledInput">Valor</label>
-                                        <input type="number" class="form-control"  placeholder="Valor" name="valor" >
-                                    </div>-->
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Mês</label>
                                         <select class="form-select" name="mes" id="mes">
                                             <option value="00">Escolha o mês</option>
-                                            <option value="01">Janeiro</option>
-                                            <option value="02">Fevereiro</option>
-                                            <option value="03">Março</option>
-                                            <option value="04">Abril</option>
-                                            <option value="05">Maio</option>
-                                            <option value="06">Junho</option>
-                                            <option value="07">Julho</option>
-                                            <option value="08">Agosto</option>
-                                            <option value="09">Setembro</option>
-                                            <option value="10">Outubro</option>
-                                            <option value="11">Novembro</option>
-                                            <option value="12">Dezembro</option>
+                                            <option value="01" {{$nota->mes==1?'selected':''}}>Janeiro</option>
+                                            <option value="02" {{$nota->mes==2?'selected':''}}>Fevereiro</option>
+                                            <option value="03" {{$nota->mes==3?'selected':''}}>Março</option>
+                                            <option value="04" {{$nota->mes==4?'selected':''}}>Abril</option>
+                                            <option value="05" {{$nota->mes==5?'selected':''}}>Maio</option>
+                                            <option value="06" {{$nota->mes==6?'selected':''}}>Junho</option>
+                                            <option value="07" {{$nota->mes==7?'selected':''}}>Julho</option>
+                                            <option value="08" {{$nota->mes==8?'selected':''}}>Agosto</option>
+                                            <option value="09" {{$nota->mes==9?'selected':''}}>Setembro</option>
+                                            <option value="10" {{$nota->mes==10?'selected':''}}>Outubro</option>
+                                            <option value="11" {{$nota->mes==11?'selected':''}}>Novembro</option>
+                                            <option value="12" {{$nota->mes==12?'selected':''}}>Dezembro</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Ano</label>
-                                        <input type="number" class="form-control"  placeholder="Ano" name="ano" value="2024" >
+                                        <input type="number" class="form-control"  placeholder="Ano" name="ano" value="{{$nota->ano}}" >
                                     </div>
                                 </div>
 
@@ -172,25 +163,26 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Emisão</label>
-                                        <input type="date" class="form-control" name="emissao" placeholder="Data" >
+                                        <input type="date" class="form-control" name="emissao" placeholder="Data" value="{{$nota->emissao->format('Y-m-d')}}">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Status</label>
                                         <select class="form-select" name="status">
-                                            <option value="lancada">Lançada</option>
-                                            <option value="emitida">Emitida</option>
-                                            <option value="importada">Importada</option>
-                                            <option value="editada">Editada</option>
-                                            <option value="cancelada">Cancelada</option>
+                                            <option value="lancada" {{$nota->status=='lancada'?'selected':''}}>Lançada</option>
+                                            <option value="emitida" {{$nota->status=='emitida'?'selected':''}}>Emitida</option>
+                                            <option value="importada" {{$nota->status=='importada'?'selected':''}}>Importada</option>
+                                            <option value="editada" {{$nota->status=='editada'?'selected':''}}>Editada</option>
+                                            <option value="substituida" {{$nota->status=='substituida'?'selected':''}}>Editada</option>
+                                            <option value="cancelada" {{$nota->status=='cancelada'?'selected':''}}>Cancelada</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="disabledInput">Link</label>
-                                        <input type="text" class="form-control" name="link" placeholder="Link para download" >
+                                        <input type="text" class="form-control" name="link" placeholder="Link para download" value="{{$nota->link}}" >
                                     </div>
                                 </div>
                             </div>
@@ -198,11 +190,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="cidade">Descrição</label>
-                                        <textarea class="form-control" name="descricao" rows="5">00 Sessões de psicoterapia realizadas em:
-/2024 de forma on-line pela Dra. Larissa Pires Ruiz. CRP 06/12575583.
-
-                                        </textarea>
+                                        <label for="descricao">Descrição</label>
+                                        <textarea class="form-control" name="descricao" rows="5">{{$nota->descricao}}</textarea>
                                     </div>
                                 </div>
 
@@ -212,13 +201,22 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="obs">Observações</label>
-                                        <textarea class="form-control" name="obs" ></textarea>
+                                        <textarea class="form-control" name="obs" >{{$nota->obs}}</textarea>
                                     </div>
                                 </div>
 
 
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="obs">Arquivo</label>
+                                        <input type="file" class="form-control" name="arquivo" placeholder="PDF" >
+                                    </div>
+                                </div>
 
+
+                            </div>
                             <div class="row">
                                 <div class="col-sm-6 d-flex">
                                     <button type="submit" class="btn btn-primary me-1 mb-1">Salvar</button>

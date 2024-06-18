@@ -11,6 +11,10 @@ class NotaFiscal extends Model
     use HasFactory;
     protected $table = 'notas_fiscais';
     protected $fillable = ['id'];
+    protected $casts = [
+        'emissao' => 'datetime:d/m/Y'
+
+    ];
 
     public function getNome(){
         $paciente = Paciente::findOrFail($this->paciente_id);

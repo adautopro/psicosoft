@@ -1,72 +1,80 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('site.app')
+@section('content')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LPR Saúde - Sistema Financeiro - Login</title>
+    <!-- Registration 9 - Bootstrap Brain Component -->
+    <section class="py-3 py-md-5 py-xl-5">
+        <div class="container">
+            <div class="row gy-4 align-items-center">
+                <div class="col-12 col-md-6 col-xl-7">
+                    <div class="d-flex justify-content-center text-bg-primary">
+                        <div class="col-12 col-xl-9">
+                            <img class="img-fluid rounded mb-4" loading="lazy" src="./img/logo.png" width="245" height="80" alt="LPR LOGO">
+                            <hr class="border-primary-subtle mb-4">
+                            <h2 class="h1 mb-4">Painel de informações e conteúdo dedicado.</h2>
+                            <p class="lead mb-5">Consulte seus dados financeiros e fiscais, além de acessar conteúdos exclusivos. </p>
 
 
 
-    <link rel="shortcut icon" href="./assets/compiled/svg/favicon.svg" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/compiled/css/app.css">
-    <link rel="stylesheet" href="./assets/compiled/css/app-dark.css">
-    <link rel="stylesheet" href="./assets/compiled/css/auth.css">
-</head>
-
-<body>
-<script src="assets/static/js/initTheme.js"></script>
-<div id="auth">
-
-    <div class="row h-100">
-        <div class="col-lg-5 col-12">
-            <div id="auth-left">
-                <div>
-                    <a href="/home"><img src="img/logo.png" alt="Logo"></a>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="auth-title">Login</h1>
-                <p class="auth-subtitle mb-5">Acesse o controle de sessões, pagamentos e notas fiscais</p>
-                @include('blocks.alerts')
+                <div class="col-12 col-md-6 col-xl-5">
+                    <div class="card border-0 rounded-4">
+                        <div class="card-body p-3 p-md-4 p-xl-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-4">
+                                        <p>&nbsp;</p>
+                                        <h2 class="h3">Login</h2>
+                                        <h3 class="fs-6 fw-normal text-secondary m-0">Preencha para acessar.</h3>
+                                        @include('blocks.alerts')
+                                    </div>
+                                </div>
+                            </div>
+                            <form method="POST">
+                                @csrf
+                                <div class="row gy-3 overflow-hidden">
 
-                <form method="POST">
-                    @csrf
-                    <div class="form-group position-relative has-icon-left mb-4">
-                        <input type="text" class="form-control form-control-xl" placeholder="E-mail" name="email">
-                        <div class="form-control-icon">
-                            <i class="bi bi-person"></i>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
+                                            <label for="email" class="form-label">Email</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" name="password" id="password" value="" placeholder="Senha" required>
+                                            <label for="password" class="form-label">Senha</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2 justify-content-between">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" name="rememberMe" id="rememberMe">
+                                                <label class="form-check-label text-secondary" for="rememberMe">
+                                                    Lembrar de mim
+                                                </label>
+                                            </div>
+                                            <a href="#!" class="link-primary text-decoration-none">Esqueci a senha</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid my-3">
+                                            <button class="button text-light" type="submit">Acessar</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="m-0 text-secondary text-center">Não tem senha? <a href="#!" class="link-primary text-decoration-none">Cadastre-se</a></p>
+                                    </div>
+                                </div>
+                            </form>
+
+
                         </div>
                     </div>
-                    <div class="form-group position-relative has-icon-left mb-4">
-                        <input type="password" class="form-control form-control-xl" placeholder="Senha" name="password">
-                        <div class="form-control-icon">
-                            <i class="bi bi-shield-lock"></i>
-                        </div>
-                    </div>
-                    <div class="form-check form-check-lg d-flex align-items-end">
-                        <input class="form-check-input me-2" type="checkbox" value="" id="flexCheckDefault">
-                        <label class="form-check-label text-gray-600" for="flexCheckDefault">
-                            Manter conectado
-                        </label>
-                    </div>
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5" type="submit">Acessar</button>
-                </form>
-                <div class="text-center mt-5 text-lg fs-4">
-                    <p class="text-gray-600">Não tem cadastro?
-                        <a href="/register" class="font-bold">Cadastre-se</a>.</p>
-                    <p><a class="font-bold" href="/forgot-password">Esqueceu a senha?</a>.</p>
                 </div>
             </div>
         </div>
-        <div class="col-lg-7 d-none d-lg-block">
-            <div id="auth-right">
-
-            </div>
-        </div>
-    </div>
-
-</div>
-@include('blocks.footer')
-@yield('final_imports')
-</body>
-
-</html>
+    </section>
+@endsection

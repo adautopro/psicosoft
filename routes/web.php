@@ -17,13 +17,23 @@ use App\Http\Controllers\NotaFiscalController;
 
 Route::get('/', function () {
     //return view('welcome');
-    return view('home');
+    return view('index');
+
+});
+Route::get('artigos', function () {
+    //return view('welcome');
+    return view('site.artigos');
+
 });
 Route::get('home', function () {
     //return view('welcome');
-    return view('home');
+    return view('dashboard');
 });
 route::middleware(['auth'])->group( function(){
+    Route::get('/admin', function () {
+        //return view('welcome');
+        return view('admin');
+    });
     Route::prefix('pacientes')->group(function(){
         Route::get('/', [PacienteController::class,'index']);
         Route::get('sincronizar', [PacienteController::class,'sincronizar']);
@@ -42,7 +52,6 @@ route::middleware(['auth'])->group( function(){
         Route::post('cadastrar',[NotaFiscalController::class,'store']);
         Route::get('alterar/{id}',[NotaFiscalController::class,'edit']);
         Route::post('alterar/{id}',[NotaFiscalController::class,'update']);
-
-
+        Route::get('processar-retorno',[NotaFiscalController::class,'processarRetorno']);
     });
 });

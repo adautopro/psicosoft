@@ -109,6 +109,7 @@
                                 <button type="button" class="btn btn-outline-primary block" onclick="exportarSelecionadas()">
                                     <i class="bi bi-filetype-xml"></i> Exportar selecionadas
                                 </button>
+                                <a href="/notas/processar-retorno" class="btn btn-outline-primary" title="Processar o arquivo CSV importado do GIAP"><i class="bi bi-filetype-csv"></i> Processar retorno</a>
 
                             </div>
 
@@ -137,6 +138,7 @@
                                     <th>Ref</th>
                                     <th>Valor</th>
                                     <th>Descriçao</th>
+                                    <th>Observações</th>
                                     <th>Status</th>
                                     <th>Opções</th>
                                 </tr>
@@ -156,8 +158,9 @@
                                     <td>{{$nota->getNome()}}</td>
                                     <td>{{$nota->mes}}/{{$nota->ano}}</td>
                                     <td>R$ {{number_format($nota->valor,2,',','.')}}</td>
-                                    <td>{{html_entity_decode($nota->descricao, ENT_QUOTES, 'UTF-8') }}</td>
-                                    <!--<td>{{html_entity_decode(explode('realizada',$nota->descricao,)[0], ENT_QUOTES, 'UTF-8') }}</td>-->
+                                    <!--<td>{{html_entity_decode($nota->descricao, ENT_QUOTES, 'UTF-8') }}</td>-->
+                                    <td>{{html_entity_decode(explode('realizada',$nota->descricao,)[0], ENT_QUOTES, 'UTF-8') }}</td>
+                                    <td>{{$nota->obs }}</td>
                                     <td>
                                         @switch($nota->status)
                                             @case('emitida')
@@ -165,6 +168,9 @@
                                                 @break
                                             @case('lancada')
                                                 <span class="badge bg-success">
+                                                @break
+                                            @case('substituida')
+                                                <span class="badge bg-secondary">
                                                 @break
                                             @case('importada')
                                                 <span class="badge bg-primary">
@@ -176,8 +182,11 @@
                                             {{$nota->status}}</span>
                                     </td>
                                     <td>
+                                        @if(!empty($nota->link))
+                                            <a href="{{$nota->link}}" target="_blank" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-download"></i></a>
 
-                                        <a href="#" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></a>&nbsp;
+                                        @endif
+                                        <a href="/notas/alterar/{{$nota->id}}" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></a>&nbsp;
                                         <a href="/notas/exportar/{{$nota->id}}" target="_blank" class="btn icon btn-sm btn-outline-primary"><i class="bi bi-filetype-xml"></i></a>&nbsp;
                                         <a href="#" class="btn icon btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apagarNotas" onclick="excluirIndividual('{{$nota->id}}')"><i class="bi bi-trash"></i></a>&nbsp;
 

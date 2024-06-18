@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NotaFiscal;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
+use Mockery\Exception;
 use \Notion;
 
 class NotaFiscalController extends Controller
@@ -12,7 +13,7 @@ class NotaFiscalController extends Controller
     const DATABASE_ID = "f30bc42f90ce4e0492e535961d0a6a58";
     public function index()
     {
-        $notas = NotaFiscal::all();
+        $notas = NotaFiscal::all()->sortByDesc('id');
         return view('notas')->with('notas', $notas);
     }
 
@@ -40,6 +41,8 @@ class NotaFiscalController extends Controller
         $nota->emissao = $request->emissao;
         $nota->status = $request->status;
         $nota->paciente_id = $request->paciente_id;
+        $nota->obs = $request->obs;
+
 
         try{
             $nota->save();
@@ -48,9 +51,59 @@ class NotaFiscalController extends Controller
             return redirect()->back()->withErrors($exception->getMessage());
         }
 
+       // dd($nota);
+
         return redirect('/notas')->with('alerts',['success'=>['Nota salva']]);
 
     }
+
+    public function edit($id)
+    {
+        //nota = NotaFiscal::findOrFail($id);
+        //dd($nota);
+
+        try{
+            $nota = NotaFiscal::findOrFail($id);
+
+
+        }
+        catch(\Exception $exception){
+            return back()->withErrors($exception->getMessage());
+
+        }
+        $paciente = Paciente::find($nota->paciente_id);
+
+        return view('notas-edit')->with('nota',$nota)->with('paciente',$paciente);
+
+    }
+
+    public function update(Request $request){
+        $nota = NotaFiscal::find($request->id);
+        $nota->valor = $request->valor;
+        $nota->ano = $request->ano;
+        $nota->mes = $request->mes;
+        $nota->descricao = $request->descricao;
+        $nota->link = $request->link;
+        $nota->emissao = $request->emissao;
+        $nota->status = $request->status;
+        $nota->paciente_id = $request->paciente_id;
+        $nota->obs = $request->obs;
+        try{
+            $nota->save();
+        }
+        catch(\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+        return redirect('/notas')->with('alerts',['success'=>['Nota salva']]);
+    }
+
+    /**
+     * @param $mes
+     * @param $ano
+     * @param $numero_nota
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     */
     public function importarNotion ($mes,$ano,$numero_nota)
     {
         if($mes == '00' || !is_numeric($mes) || $numero_nota == '0' || !is_numeric($numero_nota))
@@ -62,7 +115,7 @@ class NotaFiscalController extends Controller
         $database = Notion::database(self::DATABASE_ID)
             ->query()
             ->asCollection();
-
+        $msg ='<ol>';
         foreach ($database as $item) {
             $nome = '';
             $cpf = '';
@@ -97,7 +150,9 @@ class NotaFiscalController extends Controller
                     $plural = 's';
                 else
                     $plural = '';
-                $descricao = $qnde[count($sessoes)] . ' (' . count($sessoes) . ') ' . (count($sessoes) > 1 ? 'sess&#245;es' : 'sess&#227;o') . ' de psicoterapia realizada' . $plural . ' no' . $plural . ' dia' . $plural . ':' . "\n" . $end_desc;
+                //$descricao = $qnde[count($sessoes)] . ' (' . count($sessoes) . ') ' . (count($sessoes) > 1 ? 'sess&#245;es' : 'sess&#227;o') . ' de psicoterapia realizada' . $plural . ' no' . $plural . ' dia' . $plural . ':' . "\n" . $end_desc;
+                $descricao = $qnde[count($sessoes)] . ' (' . count($sessoes) . ') ' . (count($sessoes) > 1 ? 'sessões' : 'sessão') . ' de psicoterapia realizada' . $plural . ' no' . $plural . ' dia' . $plural . ':' . "\n" . $end_desc;
+
             } catch (\Exception $e) {
                 $descricao = $e->getMessage();
             }
@@ -118,7 +173,7 @@ class NotaFiscalController extends Controller
             }
 
             try {
-                $total = $lista['rawProperties']["Total"]["number"];
+                $total = $lista['rawProperties']["Valor NF"]["formula"]["number"];
             } catch (\Exception $e) {
                 $total = 0;
             }
@@ -127,6 +182,7 @@ class NotaFiscalController extends Controller
 
             $paciente = Paciente::firstOrCreate(['notionid'=>$id,'nome'=>$nome]);
 
+
             if($total>0){
                 $nota = NotaFiscal::firstOrNew(['id' => $numero_nota]);
                 $nota->valor = $total;
@@ -134,15 +190,29 @@ class NotaFiscalController extends Controller
                 $nota->mes = $mes;
                 $nota->descricao = $descricao;
                 $nota->paciente_id = $paciente->id;
-                $nota->save();
+
+                try {
+                    $nota->save();
+                    $msg .='<li>nota '.$nota->id.' salva.</li>';
+
+                }
+                catch(Exeptions $exeptions){
+                    $msg .='<li>nota '.$nota->id.' ERRO:'.$exeptions->getMessage().'</li>';
+                }
 
                 $numero_nota++;
+
+
 
             }
 
 
         }
-        return response('Importado',200);
+        $msg .='</ol>';
+        return response($msg,200);
+    }
+    private function stringer($str){
+        return iconv('UTF-8', 'ASCII//TRANSLIT', $str);
     }
     public function gerarArquivo($ids){
         //https://www.php.net/manual/en/example.xmlwriter-simple.php
@@ -151,7 +221,7 @@ class NotaFiscalController extends Controller
         $xw = xmlwriter_open_memory();
         xmlwriter_set_indent($xw, 1);
         $res = xmlwriter_set_indent_string($xw, ' ');
-        xmlwriter_start_document($xw, '1.0', 'utf-8');
+        xmlwriter_start_document($xw, '1.0', 'UTF-8');
         // A first element
         xmlwriter_start_element($xw, 'nfe');
 
@@ -180,7 +250,7 @@ class NotaFiscalController extends Controller
 
                         //Emissão
                         xmlwriter_start_element($xw, 'dataemissao');
-                        xmlwriter_text($xw, $nota->emissao);
+                        xmlwriter_text($xw, $nota->emissao->format('d/m/Y'));
                         xmlwriter_end_element($xw);
 
                     xmlwriter_end_element($xw); // dadosprestador
@@ -214,12 +284,12 @@ class NotaFiscalController extends Controller
 
                             //nome
                             xmlwriter_start_element($xw, 'nometomador');
-                            xmlwriter_text($xw, ($paciente->nome));
+                            xmlwriter_text($xw, $this->stringer($paciente->nome));
                             xmlwriter_end_element($xw);
 
                             //logradouro
                             xmlwriter_start_element($xw, 'logradouro');
-                            xmlwriter_text($xw, ($paciente->logradouro));
+                            xmlwriter_text($xw, $this->stringer($paciente->logradouro));
                             xmlwriter_end_element($xw);
 
                             //numero
@@ -229,17 +299,17 @@ class NotaFiscalController extends Controller
 
                             //complemento
                             xmlwriter_start_element($xw, 'complemento');
-                            xmlwriter_text($xw, ($paciente->complemento));
+                            xmlwriter_text($xw, $this->stringer($paciente->complemento));
                             xmlwriter_end_element($xw);
 
                             //bairro
                             xmlwriter_start_element($xw, 'bairro');
-                            xmlwriter_text($xw, ($paciente->bairro));
+                            xmlwriter_text($xw, $this->stringer($paciente->bairro));
                             xmlwriter_end_element($xw);
 
                             //cidade
                             xmlwriter_start_element($xw, 'cidade');
-                            xmlwriter_text($xw, ($paciente->cidade));
+                            xmlwriter_text($xw, $this->stringer($paciente->cidade));
                             xmlwriter_end_element($xw);
 
                             //uf
@@ -249,7 +319,7 @@ class NotaFiscalController extends Controller
 
                             //pais
                             xmlwriter_start_element($xw, 'pais');
-                            xmlwriter_text($xw, $paciente->pais);
+                            xmlwriter_text($xw, $this->stringer($paciente->pais));
                             xmlwriter_end_element($xw);
 
                             //cep
@@ -373,7 +443,7 @@ class NotaFiscalController extends Controller
                         xmlwriter_start_element($xw, 'item');
                             //Descricao
                             xmlwriter_start_element($xw, 'descricao');
-                            xmlwriter_text($xw, ($nota->descricao));
+                            xmlwriter_text($xw, $this->stringer($nota->descricao));
                             xmlwriter_end_element($xw);
                             //valor
                             xmlwriter_start_element($xw, 'valor');
@@ -418,5 +488,66 @@ class NotaFiscalController extends Controller
           </EmissaoNotaTomada>
          */
 
+    }
+
+    public function processarRetorno(){
+
+        $file = fopen('abril.csv','r');
+        //$data = fgetcsv($file, 1000, ",");
+        while (($data = fgetcsv($file, 1000, ";")) !== false) {
+            $array[] = $data;
+        }
+        fclose($file);
+        dd($array);
+        $nao_encontradas = array();
+        foreach($array as $nota){
+            $nf = NotaFiscal::find($nota[1]);
+            if($nf && $nf->status != 'emitida'){//se achou
+                //if($nf and $nf->status != 'emitida'){//se achou
+                if($nota[23]=="Cancelada" and substr($nota[2],0,3)=="Sub" and $nf->status!='substituida'){
+                    $numero_nova_nota = explode(' ', $nota[2]);
+                    $nf_sub = NotaFiscal::findOrNew($numero_nova_nota[4]);
+                    $nf_sub->id = $numero_nova_nota[4];
+                    $nf_sub->valor = $nf->valor;
+                    $nf_sub->ano = $nf->ano;
+                    $nf_sub->mes = $nf->mes;
+                    $nf_sub->descricao = $nf->descricao;
+                    $nf_sub->paciente_id = $nf->paciente_id;
+                    $nf_sub->status = 'emitida';
+                    $nf_sub->save();
+
+                    $nf->status = 'substituida';
+                    $nf->obs = utf8_decode($nota[2]);
+
+
+                    try {
+                        $nf->save();
+                    }
+                    catch(\Illuminate\Database\QueryException $exception){
+                        //dd($nf_sub);
+                        echo $exception->getMessage()."\n";
+                    }
+
+                }//caso cancelada,
+                else{
+                    $nf->link = $nota[20];
+                    $nf->status = 'emitida';
+                    $nf->save();
+
+                }
+
+            }// fim se achou
+
+            else{
+                $nao_encontradas[] = $nota[1];
+            }
+
+
+
+
+        }// fim foreach
+
+        return "processamento concluido";
+        //return "Retorno não implementado";
     }
 }
